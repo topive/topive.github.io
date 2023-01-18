@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+    <head>
+      <meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+        <meta charset="ISO-8859-10">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="shortcut icon" href="img/logo.png">
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+			  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+			  crossorigin=""/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/leaflet.legend.css">
+        <link rel="stylesheet" href="css/leaflet.extra-markers.min.css">
+        <link rel="stylesheet" href="css/leaflet-beautify-marker-icon.css">
+        <link rel="stylesheet" href="css/all.css">
+        <link rel="stylesheet" href="css/leaflet-sidebar.min.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <title>Uimapaikat</title>
+
+		<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+			integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+			crossorigin=""></script>
+        <script src="https://unpkg.com/leaflet-geometryutil@0.9.1/src/leaflet.geometryutil.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/leaflet.legend.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.hotline.js"></script>
+        <script src="data/uimapaikat.js"></script>
+        <script src="data/up_kaikki.js"></script>
+        <script src="js/funktiot.js"></script>
+        <script src="js/leaflet.extra-markers.min.js"></script>
+        <script src="js/Leaflet.MakiMarkers.js"></script>
+        <script src="js/leaflet-beautify-marker-icon.js"></script>
+        <script src="js/all.js"></script>
+        <script src="js/leaflet-sidebar.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+    <style>
+    .custom-popup .leaflet-popup-content-wrapper {
+    background:#2c3e50;
+    color:#fff;
+    font-size:16px;
+    line-height:24px;
+    }
+
+    .custom-popup .leaflet-popup-content-wrapper a {
+    color:rgba(255,255,255,0.5);
+    }
+
+    .custom-popup .leaflet-popup-tip-container {
+    width:30px;
+    height:15px;
+    }
+
+    .custom-popup .leaflet-popup-tip {
+    background: transparent;
+    box-shadow:  0 0 0;
+    }
+    </style>
+    </head>
+    <body>
+           <div id="sidebar" class="sidebar collapsed">
+            <!-- Nav tabs -->
+            <div class="sidebar-tabs">
+                <ul role="tablist">
+                    <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+                </ul>
+
+                <ul role="tablist">
+                    <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+                </ul>
+            </div>
+
+            <!-- Tab panes -->
+            <div class="sidebar-content">
+                <div class="sidebar-pane" id="home">
+                    <h1 class="sidebar-header">
+                        Tietoja:
+                        <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <div id="map" class="custom-popup" style= height:100%></div>
+
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+
+              <!-- Infonapin sisÃĪltÃķ-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Info</h4>
+                </div>
+                <div class="modal-body">
+                  <p>Tämä on demo uimarantakartasta.</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Sulje</button>
+                </div>
+              </div>
+
+            </div>
+        </div>
+
+        <script>
+
+        var taustakartta = L.tileLayer('https://tiles.kartat.kapsi.fi/taustakartta/{z}/{x}/{y}.jpg');
+
+        /* mapin asetukset */
+        var opts = {
+          map: {
+            center: [62.2404, 25.7450],
+            zoom: 17,
+            zoomControl: false,
+            minZoom: 10,
+            maxZoom: 17,
+            layers: [taustakartta]
+          },
+        };
+
+
+        var map = new L.Map('map', opts.map);
+
+        /* Taustakartan muodostaminen */
+        var baseLayers = {
+           			 "Taustakartta": taustakartta,
+        		};
+
+        L.control.layers(baseLayers).addTo(map);
+
+        /* Infonapin luonti */
+        L.easyButton('<img src="img/info.png" style="width:13px">', function(btn, map) {
+            $('#myModal').modal('show');
+        }, 'Info').setPosition('topright').addTo(map);
+
+        /* Paikannuksen luonti */
+        var lc = L.control
+            .locate({
+              position: "topright",
+              strings: {
+                title: "Show me where I am, yo!"
+              }
+            }).addTo(map);
+
+        var sidebar = L.control.sidebar('sidebar').addTo(map);
+
+        function appendData(data) {
+            var mainContainer = document.getElementById("home");
+            var vessa;
+            var laituri;
+            var pukuhuone;
+
+            for (var i = 0; i < data.length; i++) {
+                var div = document.createElement("div");
+
+                if(data[i].hasOwnProperty("properties") && data[i].properties.hasOwnProperty("toilet")) {
+                  var vessa = "WC" + "<br />";
+                } else {
+                  var vessa = ""
+                } 
+
+                if(data[i].hasOwnProperty("properties") && data[i].properties.hasOwnProperty("pier")) {
+                  var laituri = "Laituri" + "<br />";
+                } else {
+                  var laituri = "";
+                } 
+
+                if(data[i].hasOwnProperty("properties") && data[i].properties.hasOwnProperty("changingRooms")) {
+                  var pukuhuone = "Pukuhuone" + "<br />";
+                } else {
+                  var pukuhuone = "";
+                } 
+
+                div.innerHTML = "<b>" + data[i].name + "</b>" + "<br/>" + "Osoite: " + data[i].location.address + "<br/>" + "<a href='"+data[i].www+"'>Lisätietoja</a>" + "<br />" + "<br />" + "Varusteet: " + "<br />" + vessa + laituri + pukuhuone + "<br />" + '<hr style="width:70%;height:2px;border-width:0;color:gray;background-color:gray">';
+                mainContainer.appendChild(div);
+            }
+          }
+
+        appendData(up_kaikki_tiedot);
+        
+
+        var piste_style = {
+                    radius: 8,
+                    fillColor: "#ff7800",
+                    color: "#01AEDD",
+                    weight: 3,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                };
+
+        var geojson;        
+        
+        var pistelista = [];
+
+        data.forEach(function(pisteet) {
+          var piste = L.geoJSON(pisteet.location.geometries);
+          pistelista.push(piste);
+        });
+
+        var pisteet = new L.featureGroup(pistelista);
+
+        var bounds = pisteet.getBounds();
+
+        map.fitBounds(bounds);
+        
+        function highlightFeature(e) {
+              var layer = e.target;
+
+              layer.setStyle({
+                  weight: 5,
+                  color: '#666',
+                  dashArray: '',
+                  fillOpacity: 0.7
+              });
+
+              layer.bringToFront();
+          }
+
+        function resetHighlight(e) {
+              var layer = e.target;
+
+              layer.setStyle(piste_style);
+
+              layer.bringToFront();
+          }
+
+
+        /* Aineisto kartalle */
+
+        data.forEach(function(uimapaikka) {
+          
+          var popup = L.popup()
+            .setContent(uimapaikka.name);
+          
+          var sisalto = (uimapaikka.name);
+
+          console.log(uimapaikka.name);
+
+          var geojson = L.geoJSON(uimapaikka.location.geometries, {
+
+            onEachFeature: function (feature, layer) {
+                layer.bindPopup(popup);
+                layer.on({
+                  mouseover: highlightFeature,
+                  mouseout: resetHighlight,
+                });
+            },
+
+            pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, piste_style);
+             }
+            
+          }).addTo(map);
+        });
+
+        </script>
+    </body>
+</html>
