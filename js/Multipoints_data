@@ -1,0 +1,22 @@
+L.multiOptionsPolyline(vaikeus_testi, {
+    multiOptions: {
+        optionIdxFn: function (latLng) {
+            var i,
+                vaikeustaso = [1, 2, 3, 4];
+
+            for (i = 0; i < vaikeustaso.length; ++i) {
+                if (latLng.alt <= vaikeustaso[i]) {
+                    return i;
+                }
+            }
+            return vaikeustaso.length;
+        },
+        options: [
+            {color: '#0000FF'}, {color: '#0040FF'}, {color: '#0080FF'},
+            {color: '#00FFB0'}
+        ]
+    },
+    weight: 5,
+    lineCap: 'butt',
+    opacity: 0.75,
+    smoothFactor: 1}).addTo(map);
