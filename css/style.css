@@ -1,0 +1,65 @@
+html, body{
+    height: 100%;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+}
+
+.elevation-div {
+  height: auto;
+  width: 95%;
+  border-top: 2px solid black;
+  border-bottom: 0px;
+  font: 8px/1.5 Futura, Arial, Helvetica, sans-serif;
+}
+
+.elevation-summary {
+  font-family: Futura, "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  height: auto;
+  bottom: 5px;
+  left: 0px;
+}
+
+.elevation-summary .summaryvalue {
+  font-weight: bold;
+}
+
+.elevation-control.elevation .axis text{
+  font-family: Futura;
+  font-size: 10px;
+  text-anchor: end;
+  fill: #023;
+  font-weight: 700;
+}
+/* Asetukset mobiilikäyttöä varten */
+@media only screen and (max-width: 800px) {
+      .elevation-control.elevation .axis text{
+          font-size: 8px;
+}
+      .elevation-summary {
+          font-size: 8px;
+      }
+}
+
+.custom-theme.elevation-control.elevation .background{
+    background-color: rgba(100, 100, 100, 0);
+}
+.custom-theme.elevation-control.elevation .area {
+  fill: rgba(211, 112, 25, 0.85);
+  stroke: rgba(89, 63, 141, 0.85);
+  stroke-width: 2.8;
+}
+
+.custom-theme.height-focus {
+  fill: rgba(89, 63, 141, 0.85);
+  stroke: rgba(211, 112, 25, 0.85);
+  stroke-width: 1;
+}
+
+.custom-theme.elevation-polyline {
+  stroke: rgba(63,198,238, 0);
+  stroke-opacity: 0;
+}
